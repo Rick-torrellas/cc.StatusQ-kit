@@ -6,6 +6,7 @@ readme = "README.md"
 authors = [{name = "Ricardo Torrellas", email = "ricardo.torrejas@gmail.com"}]
 requires-python = ">=3.11"
 dependencies = [
+    "cc-statusq-cpu>=0.8.1",
     "core-cpu-monitor==0.2.2",
     "core-log-engine==0.2.2",
     "gitchangelog>=3.0.4",
