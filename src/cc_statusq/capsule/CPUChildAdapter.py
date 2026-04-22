@@ -7,11 +7,11 @@ from ..core.SystemEventBus import SystemEventBus
 
 class CPUChildAdapter(Monitorable):
     """Adapta la aplicación StatusqCPU al contrato del Orquestador."""
-    
+
     def __init__(self, cpu_app: StatusqCPU, cpu_bus: CPUEventBus, global_bus: SystemEventBus):
         self.cpu_app = cpu_app
         self.global_bus = global_bus
-        
+
         # 1. El adaptador se "engancha" al bus de la app hija.
         # Esto es lo que evita meter el bus dentro de StatusqCPU directamente.
         cpu_bus.subscribe(DataReceivedEvent, self._translate_to_system)
@@ -23,8 +23,8 @@ class CPUChildAdapter(Monitorable):
             data={
                 "load": event.status.total_usage_percentage,
                 "temp": event.status.current_temperature,
-                "cores": event.status.logical_cores
-            }
+                "cores": event.status.logical_cores,
+            },
         )
         # 2. Publica el reporte en el bus de la Aplicación Madre (StatusQ)
         self.global_bus.publish(system_report)

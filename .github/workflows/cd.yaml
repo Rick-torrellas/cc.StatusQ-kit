@@ -2,19 +2,23 @@ name: CD Pipeline
 
 on:
   workflow_call:
-    secrets:
-      DOCKERHUB_USERNAME:
-        required: true
-      DOCKERHUB_TOKEN:
-        required: true
+  workflow_dispatch:
 
 jobs:
-  
-  publish-image:
-    uses: ./.github/workflows/docker-publish.yaml
-    if: startsWith(github.ref, 'refs/tags/v')
-    with:
-      image_name: "statusq.cpu"
-    secrets:
-      DOCKERHUB_USERNAME: ${{ secrets.DOCKERHUB_USERNAME }}
-      DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
+  # Llamada al módulo de publicación (solo si hay un tag)
+  publish-pip-package:
+    if: startsWith(github.ref, 'refs/tags/')
+    permissions:
+      contents: read    # Necesario para checkout
+      id-token: write   # Requerido para autenticación OIDC (PyPI/Trusted Publishers)
+    uses: ./.github/workflows/pip-publish.yaml
+
+  deploy-gitub-pages:
+    # Si Pages depende de que el paquete se publique primero, 
+    # podrías añadir: needs: publish-pip-package
+    permissions:
+      contents: read
+      pages: write      # Requerido para el despliegue de Pages
+      id-token: write   # Requerido para la autenticación del despliegue
+    uses: ./.github/workflows/github-page.yaml
+    secrets: inherit

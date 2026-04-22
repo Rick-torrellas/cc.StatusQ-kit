@@ -25,13 +25,9 @@ class StatusQ:
         """Inicia el flujo continuo de datos de todos los hijos."""
         threads = []
         for child in self._children:
-            t = threading.Thread(
-                target=child.start_stream,
-                args=(interval,),
-                daemon=True
-            )
+            t = threading.Thread(target=child.start_stream, args=(interval,), daemon=True)
             threads.append(t)
             t.start()
-        
+
         for t in threads:
             t.join()

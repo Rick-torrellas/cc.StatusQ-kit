@@ -17,12 +17,14 @@ def event_bus() -> SystemEventBus:
     """
     return SystemEventBus()
 
+
 @pytest.fixture
 def orchestrator(event_bus: SystemEventBus) -> StatusQ:
     """
     Provides the StatusQ (Mother Application) initialized with a clean bus.
     """
     return StatusQ(event_bus=event_bus)
+
 
 @pytest.fixture
 def mock_child() -> MagicMock:
@@ -34,21 +36,19 @@ def mock_child() -> MagicMock:
     child.get_id.return_value = "mock-adapter"
     return child
 
+
 @pytest.fixture
 def spy_callback() -> MagicMock:
     """
-    A generic spy function to subscribe to the bus and verify 
+    A generic spy function to subscribe to the bus and verify
     if events are actually being published.
     """
     return MagicMock()
+
 
 @pytest.fixture
 def sample_health_data() -> dict:
     """
     Provides consistent mock data for HealthReportEvent testing.
     """
-    return {
-        "load": 15.5,
-        "temp": 42.0,
-        "cores": 8
-    }
+    return {"load": 15.5, "temp": 42.0, "cores": 8}

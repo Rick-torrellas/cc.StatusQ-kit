@@ -4,8 +4,10 @@ from .SystemEvent import SystemEvent
 
 T = TypeVar("T", bound=SystemEvent)
 
+
 class SystemEventBus:
     """Bus de eventos propio del Orquestador (independiente de los hijos)."""
+
     def __init__(self):
         self._subscribers: Dict[Type[SystemEvent], List[Callable]] = {}
 
