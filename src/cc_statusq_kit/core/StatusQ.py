@@ -21,7 +21,7 @@ class StatusQ:
         for child in self._children:
             child.pulse()
 
-    def orchestrate_stream(self, interval: float):
+    def telemetry_stream(self, interval: float):
         """Inicia el flujo continuo de datos de todos los hijos."""
         threads = []
         for child in self._children:
