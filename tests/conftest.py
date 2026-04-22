@@ -1,6 +1,7 @@
 from unittest.mock import MagicMock
 
 import pytest
+
 from cc_statusq_kit.core import HealthReportEvent, StatusQ, SystemEventBus
 
 
@@ -12,19 +13,21 @@ def global_event_bus():
     """
     return SystemEventBus()
 
+
 @pytest.fixture
 def statusq_orchestrator(global_event_bus):
     """
-    Provides an instance of the StatusQ orchestrator initialized with 
+    Provides an instance of the StatusQ orchestrator initialized with
     a fresh global event bus.
     """
     return StatusQ(event_bus=global_event_bus)
+
 
 @pytest.fixture
 def mock_cpu_app():
     """
     Mocks the StatusqCPU external dependency.
-    This allows us to test the CPUAdapter without the actual 
+    This allows us to test the CPUAdapter without the actual
     cc_statusq_cpu library installed.
     """
     mock_app = MagicMock()
@@ -32,6 +35,7 @@ def mock_cpu_app():
     mock_app.run_single_check = MagicMock()
     mock_app.run_continuous_monitoring = MagicMock()
     return mock_app
+
 
 @pytest.fixture
 def mock_cpu_bus():
@@ -41,23 +45,18 @@ def mock_cpu_bus():
     """
     return MagicMock()
 
+
 @pytest.fixture
 def sample_health_data():
     """
     Provides a standard dictionary of health data for assertions.
     """
-    return {
-        "load": 45.5,
-        "temp": 60.0,
-        "cores": 8
-    }
+    return {"load": 45.5, "temp": 60.0, "cores": 8}
+
 
 @pytest.fixture
 def sample_health_event(sample_health_data):
     """
     Provides a pre-configured HealthReportEvent.
     """
-    return HealthReportEvent(
-        source="test-monitor",
-        data=sample_health_data
-    )
+    return HealthReportEvent(source="test-monitor", data=sample_health_data)

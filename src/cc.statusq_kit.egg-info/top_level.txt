@@ -1,1 +1,1 @@
-cc_statusq-kit
+cc_statusq_kit

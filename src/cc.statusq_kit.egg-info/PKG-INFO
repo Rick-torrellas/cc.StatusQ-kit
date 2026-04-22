@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: cc.statusq-kit
-Version: 0.1.0
+Version: 0.2.0
 Summary: Real-time CPU monitor. Track performance, temperature, and usage stats instantly.
 Author-email: Ricardo Torrellas <ricardo.torrejas@gmail.com>
 Requires-Python: >=3.11

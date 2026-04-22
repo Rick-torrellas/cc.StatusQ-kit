@@ -6,7 +6,6 @@ from ..core.SystemEventBus import SystemEventBus
 
 
 class CPUAdapter(Monitorable):
-
     def __init__(self, cpu_app: StatusqCPU, cpu_bus: CPUEventBus, global_bus: SystemEventBus):
         self.cpu_app = cpu_app
         self.global_bus = global_bus

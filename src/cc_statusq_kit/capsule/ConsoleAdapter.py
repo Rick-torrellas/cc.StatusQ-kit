@@ -4,7 +4,6 @@ from ..core.SystemEventBus import SystemEventBus
 
 
 class ConsoleAdapter(Monitorable):
-
     def __init__(self, global_bus: SystemEventBus):
         self.global_bus = global_bus
         self.global_bus.subscribe(HealthReportEvent, self._handle_report)
