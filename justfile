@@ -17,7 +17,7 @@ publish:
 
 # Run the test suite with verbose output using pytest
 test:
-	uv run --active pytest -v  --showlocals
+	uv run pytest -v  --showlocals
 
 # Run all code quality checks (formatting and linting)
 check: format-check lint-check

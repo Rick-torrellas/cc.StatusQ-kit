@@ -7,7 +7,7 @@ from .SystemEventBus import SystemEventBus
 
 
 class StatusQ:
-    def __init__(self, event_bus: SystemEventBus):
+    def __init__(self, event_bus: SystemEventBus ):
         self._event_bus = event_bus
         self._children: List[Monitorable] = []
 
@@ -21,7 +21,7 @@ class StatusQ:
         for child in self._children:
             child.pulse()
 
-    def telemetry_stream(self, interval: float):
+    def telemetry_stream(self, interval: float, block: bool = True):
         """Inicia el flujo continuo de datos de todos los hijos."""
         threads = []
         for child in self._children:
@@ -29,5 +29,7 @@ class StatusQ:
             threads.append(t)
             t.start()
 
-        for t in threads:
-            t.join()
+        # TODO: esto se siente como un parche, implementar un diseño para integrar el echo que un adaptador hijo tome el control del programa  # noqa: E501
+        if block:
+            for t in threads:
+                t.join()

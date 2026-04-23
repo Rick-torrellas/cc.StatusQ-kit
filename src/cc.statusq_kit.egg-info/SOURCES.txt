@@ -9,6 +9,7 @@ src/cc.statusq_kit.egg-info/top_level.txt
 src/cc_statusq_kit/__init__.py
 src/cc_statusq_kit/capsule/CPUAdapter.py
 src/cc_statusq_kit/capsule/ConsoleAdapter.py
+src/cc_statusq_kit/capsule/TextualAdapter.py
 src/cc_statusq_kit/capsule/__init__.py
 src/cc_statusq_kit/core/Monitorable.py
 src/cc_statusq_kit/core/StatusQ.py

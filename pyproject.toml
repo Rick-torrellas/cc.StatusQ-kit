@@ -1,6 +1,6 @@
 [project]
 name = "cc.statusq-kit"
-version = "0.2.0"
+version = "0.3.2"
 description = "Real-time CPU monitor. Track performance, temperature, and usage stats instantly."
 readme = "README.md"
 authors = [{name = "Ricardo Torrellas", email = "ricardo.torrejas@gmail.com"}]
@@ -12,6 +12,7 @@ dependencies = [
     "gitchangelog>=3.0.4",
     "numpy>=2.4.2",
     "psutil>=7.2.2",
+    "textual>=8.2.4",
 ]
 
 [dependency-groups]

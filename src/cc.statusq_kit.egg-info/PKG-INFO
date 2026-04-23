@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: cc.statusq-kit
-Version: 0.2.0
+Version: 0.3.2
 Summary: Real-time CPU monitor. Track performance, temperature, and usage stats instantly.
 Author-email: Ricardo Torrellas <ricardo.torrejas@gmail.com>
 Requires-Python: >=3.11
@@ -12,78 +12,81 @@ Requires-Dist: core-log-engine==0.2.2
 Requires-Dist: gitchangelog>=3.0.4
 Requires-Dist: numpy>=2.4.2
 Requires-Dist: psutil>=7.2.2
+Requires-Dist: textual>=8.2.4
 Dynamic: license-file
 
-# StatusQ.cpu
+# cc.StatusQ-kit
 
 > Efficient monitoring and management of CPU status.
 
-![License](https://img.shields.io/badge/license-MIT-blue.svg)
-![Version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Rick-torrellas/core-log-engine/badges/version.json)
-[![Main CI Pipeline](https://github.com/Rick-torrellas/StatusQ.cpu/actions/workflows/main.yaml/badge.svg)](https://github.com/Rick-torrellas/StatusQ.cpu/actions/workflows/main.yaml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+![Version](https://img.shields.io/endpoint?url=https://raw.githubusercontent.com/Rick-torrellas/cc.StatusQ-kit/badges/version.json)
+![test](https://github.com/Rick-torrellas/cc.StatusQ-kit/actions/workflows/main.yaml/badge.svg)(https://github.com/Rick-torrellas/cc.StatusQ-kit/actions/workflows/main.yaml)
+[![Python Version](https://img.shields.io/badge/python-3.11+-blue?logo=python&logoColor=white)](https://www.python.org/)
+[![Download](https://img.shields.io/github/v/release/Rick-torrellas/cc.StatusQ-kit?label=Download&color=orange)](https://github.com/Rick-torrellas/cc.StatusQ-kit/releases)
+[![docs](https://img.shields.io/badge/docs-read_now-blue?style=flat-square)](https://rick-torrellas.github.io/cc-book-kit/)
+[![Ask DeepWiki](https://img.shields.io/badge/DeepWiki-Documentation-blue?logo=gitbook&logoColor=white)](https://deepwiki.com/Rick-torrellas/cc.StatusQ-kit)
 
 ## 📖 Description
 
-**StatusQ**.cpu is a tool designed to provide accurate, real-time metrics on CPU performance and status. Its purpose is to facilitate observability in systems, allowing developers and administrators to make informed decisions based on the current workload.
+StatusQ is a modular, event-driven monitoring engine designed to decouple system data collection from the presentation layer. Built on a robust Event Bus (Pub-Sub) architecture, it allows you to observe system metrics (like CPU, Memory, or Network) through a platform-agnostic core.
 
-## ✨ Main Features
+---
 
-- **Real-Time Monitoring**: Instant visualization of core and process usage.
-- **Lightweight and Fast**: Designed to have a minimal memory footprint.
-- **Configurable Alerts**: Set thresholds to receive notifications when the CPU exceeds certain limits.
-- **Data Export**: Ability to export logs for later analysis.
+## Installation
 
-## 📋 Table of Contents
-
-- [🚀 Installation](#installation)
-- [💻 Usage](#usage)
-- [⚙️ Configuración](#config)
-
-## 🚀 Installation
-
-### Prerequisites
-
-Ensure you have the following installed before starting:
-
-- python
-- pip
-
-### Steps
-
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/Rick-torrellas/statusq.cpu.git
-   ```
-2. Navigate to the project directory:
-   ```bash
-   cd statusq-cpu
-   ```
-3. Install the dependencies:
-   ```bash
-   just setup
-   ```
-
-## 💻 Usage
-
-To start the application in monitoring mode:
-
-```bash
-just run
+```
+pip install cc.statusq-kit
 ```
 
-## ⚙️ Configuración
+---
 
+## Usage
 
-## 🤝 Contributing
+```python
+from cc_statusq_cpu.core import StatusqCPU, CPUEventBus
+from cc_statusq_cpu.capsule import PsutilCPUProvider
+from cc_statusq_kit.core.StatusQ import StatusQ
+from cc_statusq_kit.core.SystemEventBus import SystemEventBus
+from cc_statusq_kit.capsule.CPUAdapter import CPUAdapter
+from cc_statusq_kit.capsule.ConsoleAdapter import ConsoleAdapter
 
-Contributions are welcome! Please check our contribution guide for more details.
+# 1. Initialize the Global System Event Bus
+global_bus = SystemEventBus()
+cpu_provider = PsutilCPUProvider()
+# 2. Initialize Sub-system components (Specific to CPU Library)
+cpu_bus = CPUEventBus()
+cpu_app = StatusqCPU(provider=cpu_provider,event_bus=cpu_bus)
+# 3. Create the Orchestrator
+orchestrator = StatusQ(event_bus=global_bus)
+# 4. Initialize and Register Adapters
+# The ConsoleAdapter listens for HealthReportEvents on the global bus
+console = ConsoleAdapter(global_bus=global_bus)
 
-1. Fork the project.
-2. Create your feature branch (git checkout -b feature/NewFeature).
-3. Commit your changes (git commit -m 'Add NewFeature').
-4. Push to the branch (git push origin feature/NewFeature).
-5. Open a Pull Request.
+# The CPUAdapter translates specific CPU events into global HealthReportEvents
+cpu_monitor = CPUAdapter(cpu_app=cpu_app, cpu_bus=cpu_bus, global_bus=global_bus)
+orchestrator.register_child(console)
+orchestrator.register_child(cpu_monitor)
+# --- EXECUTION MODES ---
+# MODE A: Single Pulse (Manual check)
+print("--- Executing Single Pulse ---")
+orchestrator.pulse_all()
+# MODE B: Continuous Telemetry Stream (Multi-threaded)
+print("\n--- Starting Telemetry Stream (Press Ctrl+C to stop) ---")
+try:
+    # Starts a background thread for each child to stream data every 2 seconds
+    orchestrator.telemetry_stream(interval=2.0)
+except KeyboardInterrupt:
+    print("\nStopping orchestrator...")
+```
 
-## 📄 License
+---
 
-Distributed under the MIT License. See the LICENSE file for more information.
+## 📈 System Flow
+
+* Registration: Adapters are added to the StatusQ child list.
+* Trigger: When pulse_all() or telemetry_stream() is called, the orchestrator invokes the corresponding methods on the adapters.
+* Translation: The CPUAdapter captures hardware data and publishes a HealthReportEvent to the SystemEventBus.
+* Consumption: The ConsoleAdapter receives the event via the bus and displays the formatted metrics.
+
+---
